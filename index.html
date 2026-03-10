@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virginia Odyssey Tournament Schedule</title>
+<style>
+  :root {
+    --bg: #f6f5fb;
+    --card: #ffffff;
+    --ink: #22223b;
+    --muted: #5f6477;
+    --brand: #5b3fd6;
+    --brand-2: #7b64e8;
+    --line: #e5e2f4;
+    --soft: #f0edff;
+    --accent: #ffe7a8;
+    --ok: #edf8ef;
+    --warn: #fff8e6;
+    --shadow: 0 10px 30px rgba(46, 34, 95, 0.08);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, #ffffff 0, #f7f5ff 28%, #f6f5fb 100%);
+  }
+  .hero {
+    background: linear-gradient(135deg, #4e35c5 0%, #7b64e8 100%);
+    color: white;
+    padding: 48px 20px 34px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    margin: 0;
+    max-width: 760px;
+    font-size: 1.05rem;
+    opacity: .95;
+  }
+  .search-panel {
+    margin-top: 24px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(5px);
+    border-radius: 20px;
+    padding: 18px;
+  }
+  .search-panel h2 {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+  }
+  .search-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  input[type="search"] {
+    width: 100%;
+    border: 0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-size: 1rem;
+    outline: none;
+  }
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    border: 0;
+    border-radius: 14px;
+    padding: 0 18px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    cursor: pointer;
+    background: #fff;
+    color: var(--brand);
+  }
+  .meta {
+    margin-top: 10px;
+    font-size: .92rem;
+    opacity: .92;
+  }
+  .main {
+    padding: 26px 20px 60px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .sidebar {
+    position: sticky;
+    top: 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .sidebar h3 {
+    margin: 4px 0 12px;
+    font-size: 1rem;
+  }
+  .navlist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .navlist a {
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--soft);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 600;
+  }
+  .navlist a:hover { background: #e7e2ff; }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .problem-card, .results-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .problem-head {
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
+  }
+  .problem-title {
+    margin: 0;
+    font-size: 1.55rem;
+    letter-spacing: -0.02em;
+  }
+  .problem-sub {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: .98rem;
+  }
+  .division-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--soft);
+    color: var(--brand);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: .92rem;
+    font-weight: 700;
+  }
+  .section {
+    padding: 18px 22px 22px;
+    border-top: 1px solid var(--line);
+  }
+  .section:first-of-type { border-top: 0; }
+  .section h3 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+  }
+  .location {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .96rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #ece9f7;
+    vertical-align: top;
+  }
+  th {
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    background: #faf9ff;
+  }
+  tr.break-row td, tr.lunch-row td {
+    font-weight: 700;
+    color: #6b5f33;
+    background: var(--warn);
+  }
+  tr:hover td { background: #fcfbff; }
+  .results-wrap {
+    margin: 0 0 12px;
+    display: none;
+  }
+  .results-card {
+    padding: 18px 18px 8px;
+  }
+  .results-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+  }
+  .result {
+    border-top: 1px solid var(--line);
+    padding: 14px 2px;
+  }
+  .result:first-of-type { border-top: 0; }
+  .result a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .result-title {
+    font-weight: 800;
+    font-size: 1.02rem;
+    color: var(--brand);
+  }
+  .result-meta, .result-times {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: .94rem;
+  }
+  .empty {
+    color: var(--muted);
+    padding: 8px 2px 14px;
+  }
+  .top-link {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: .92rem;
+    color: var(--brand);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .footer {
+    max-width: 1180px;
+    margin: 14px auto 0;
+    padding: 0 20px 26px;
+    color: var(--muted);
+    font-size: .9rem;
+  }
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; order: -1; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: 36px; }
+    .search-grid { grid-template-columns: 1fr; }
+    th, td { padding: 9px 8px; font-size: .92rem; }
+    .section, .problem-head { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+  <div class="hero" id="top">
+    <div class="wrap">
+      <h1>2026 Virginia Odyssey Tournament Schedule</h1>
+      <p>Use the team finder below, or browse by problem and division.</p>
+      <div class="search-panel">
+        <h2>Find Your Team</h2>
+        <div class="search-grid">
+          <input id="teamSearch" type="search" placeholder="Search by team name, number, school, coach, city, or problem" />
+          <button class="button" id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="meta">Search updates instantly as you type.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="wrap">
+      <div class="results-wrap" id="resultsWrap">
+        <div class="results-card">
+          <h3>Search Results</h3>
+          <div id="results"></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <h3>Browse by Problem</h3>
+          <nav class="navlist">
+            <a href="#sec-1">Off the Rails</a>
+            <a href="#sec-4">Lost in OMERland</a>
+            <a href="#sec-7">The Epic Quest</a>
+            <a href="#sec-10">Life&#x27;s a Ball!</a>
+            <a href="#sec-13">Taller Tales of John Jivery</a>
+          </nav>
+        </aside>
+
+        <div class="content">
+          <section class="problem-card" id="sec-1">
+            <div class="problem-head">
+              <h2 class="problem-title">Off the Rails</h2>
+              <div class="problem-sub">3 divisions</div>
+              <div class="division-tabs">
+                <span class="pill">Div I · Main Gym</span>
+                <span class="pill">Div II · Main Gym</span>
+                <span class="pill">Div III · Main Gym</span>
+              </div>
+            </div>
+            <div class="section" id="sec-1">
+              <h3>Div I</h3>
+              <p class="location">Main Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>8:00am</td><td>Hovatter Elementary School TM A</td><td>3927</td><td>Aldie, VA</td><td>Naren Raj Vaka</td><td>9:30am</td></tr>
+<tr class=""><td>8:18am</td><td>Claremont Immersion Elementary School TM A</td><td>6579</td><td>Arlington, VA</td><td>Sheri Weathers</td><td>9:48am</td></tr>
+<tr class=""><td>8:36am</td><td>Glebe Elementary School TM A</td><td>4123</td><td>Arlington, VA</td><td>Kristen Doczkat</td><td>10:06am</td></tr>
+<tr class=""><td>9:12am</td><td>Cedar Lane Elementary School TM A</td><td>5005</td><td>Ashburn, VA</td><td>Vasumathi Gonuguntla</td><td>11:00am</td></tr>
+<tr class=""><td>9:30am</td><td>Hamilton Elementary School TM A</td><td>5670</td><td>Hamilton, VA</td><td>Annie Hess</td><td>10:42am</td></tr>
+<tr class=""><td>9:48am</td><td>Forestville Elementary School TM A</td><td>4051</td><td>Great Falls, VA</td><td>Jason Bryant</td><td>11:18am</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-2">
+              <h3>Div II</h3>
+              <p class="location">Main Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>10:30am</td><td>Tabb Middle School TM A</td><td>4014</td><td>Yorktown, VA</td><td>Anna Mazzucca</td><td>12:40pm</td></tr>
+<tr class=""><td>10:48am</td><td>Kilmer Middle School TM A</td><td>4896</td><td>Vienna, VA</td><td>Kathleen Dulaney</td><td>1:34pm</td></tr>
+<tr class=""><td>11:06am</td><td>Women in IP Network TM A</td><td>6397</td><td>Arlington, VA</td><td>Kirsten Braun</td><td>1:16pm</td></tr>
+<tr class=""><td>11:24am</td><td>Blue Ridge Middle School TM A</td><td>7311</td><td>Purcellville, VA</td><td>Dena Getz</td><td>12:58pm</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-3">
+              <h3>Div III</h3>
+              <p class="location">Main Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>12:00pm</td><td>FCPL - Oakton TM A</td><td>6755</td><td>Dunn Loring, VA</td><td>Tejas Mehta</td><td>2:50pm</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+          </section>
+          <section class="problem-card" id="sec-4">
+            <div class="problem-head">
+              <h2 class="problem-title">Lost in OMERland</h2>
+              <div class="problem-sub">3 divisions</div>
+              <div class="division-tabs">
+                <span class="pill">Div I · Art Room 806</span>
+                <span class="pill">Div II · Art Room 806</span>
+                <span class="pill">Div III · Art Room 806</span>
+              </div>
+            </div>
+            <div class="section" id="sec-4">
+              <h3>Div I</h3>
+              <p class="location">Art Room 806</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>11:30am</td><td>Escuela Key Elementary School TM A</td><td>4789</td><td>Arlington, VA</td><td>Erin Aylor</td><td>8:00am</td></tr>
+<tr class=""><td>11:48am</td><td>Pinebrook Elementary School TM A</td><td>4551</td><td>Aldie, VA</td><td>Ramya Gopalarathinam</td><td>8:18am</td></tr>
+<tr class=""><td>12:06pm</td><td>Oak Hill Elementary School TM A</td><td>7595</td><td>Herndon, VA</td><td>Kripa Faraday</td><td>8:36am</td></tr>
+<tr class=""><td>12:24pm</td><td>Tappahannock Elementary School TM A</td><td>6685</td><td>Tappahannock, VA</td><td>Victoria Boone</td><td>9:12am</td></tr>
+
+<tr class=""><td>1:40pm</td><td>Albert Harris Elementary School TM A</td><td>7518</td><td>Martinsville, VA</td><td>Nancy Rosas Lopez</td><td>9:30am</td></tr>
+<tr class=""><td>1:58pm</td><td>An Achievable Dream Academy TM A</td><td>7534</td><td>Newport News, VA</td><td>Sara Betzold</td><td>9:48am</td></tr>
+<tr class=""><td>2:16pm</td><td>Sanders Corner Elementary School TM A</td><td>5692</td><td>Ashburn, VA</td><td>Amanda Norris</td><td>10:06am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-5">
+              <h3>Div II</h3>
+              <p class="location">Art Room 806</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>9:00am</td><td>Arlington Rotary Club TM A</td><td>4262</td><td>Arlington, VA</td><td>Christina Headrick</td><td>1:00pm</td></tr>
+<tr class=""><td>9:18am</td><td>Blue Ridge Middle School TM A</td><td>7312</td><td>Purcellville, VA</td><td>David Bartlow</td><td>1:18pm</td></tr>
+<tr class=""><td>9:36am</td><td>Martinsville Middle School TM A</td><td>7383</td><td>Martinsville, VA</td><td>Liz Lynch</td><td>1:36pm</td></tr>
+
+<tr class=""><td>10:12am</td><td>Watson Mountain Middle School TM A</td><td>7526</td><td>Leesburg, VA</td><td>Daniela Rodrigues-Henry</td><td>2:12pm</td></tr>
+<tr class=""><td>10:30am</td><td>Oak Hill Elementary School TM A</td><td>7535</td><td>Herndon, VA</td><td>Pooja Banait</td><td>2:30pm</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-6">
+              <h3>Div III</h3>
+              <p class="location">Art Room 806</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>10:50am</td><td>Galileo Magnet High School TM A</td><td>7527</td><td>Danville, VA</td><td>Mellisa Stein</td><td>11:50am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+          </section>
+          <section class="problem-card" id="sec-7">
+            <div class="problem-head">
+              <h2 class="problem-title">The Epic Quest</h2>
+              <div class="problem-sub">3 divisions</div>
+              <div class="division-tabs">
+                <span class="pill">Div I · Auditorium</span>
+                <span class="pill">Div II · Auditorium</span>
+                <span class="pill">Div III · Auditorium</span>
+              </div>
+            </div>
+            <div class="section" id="sec-7">
+              <h3>Div I</h3>
+              <p class="location">Auditorium</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>7:30am</td><td>Goshen Post Elementary School TM A</td><td>7047</td><td>Aldie, VA</td><td>Hindu Kothapalli</td><td>9:00am</td></tr>
+<tr class=""><td>7:50am</td><td>Olde Creek Elementary School TM A</td><td>4387</td><td>Fairfax, VA</td><td>Rachel Pham</td><td>9:36am</td></tr>
+<tr class=""><td>8:10am</td><td>Clermont Elementary School TM A</td><td>4911</td><td>Alexandria, VA</td><td>Jennifer Jones</td><td>9:18am</td></tr>
+
+<tr class=""><td>8:48am</td><td>Oak Street Elementary School TM D</td><td>6885</td><td>Falls Church, VA</td><td>Adam Fields</td><td>10:12am</td></tr>
+<tr class=""><td>9:08am</td><td>Elaine Thompson Elementary School TM A</td><td>5824</td><td>Ashburn, VA</td><td>Deepthi Siramdas</td><td>10:30am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-8">
+              <h3>Div II</h3>
+              <p class="location">Auditorium</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>9:30am</td><td>Sangster Elementary School TM A</td><td>6417</td><td>Springfield, VA</td><td>Catherine Baroang</td><td>8:18am</td></tr>
+
+<tr class=""><td>10:08am</td><td>Mark Twain Middle School TM A</td><td>4913</td><td>Alexandria, VA</td><td>Jennifer Jones</td><td>8:54am</td></tr>
+<tr class=""><td>10:28am</td><td>Smarts Mill Middle School TM A</td><td>4348</td><td>Leesburg, VA</td><td>Jennifer Guida</td><td>8:36am</td></tr>
+<tr class=""><td>10:48am</td><td>James H Cary Intermediate School TM A</td><td>6686</td><td>Montross, VA</td><td>Yuwei Chen</td><td>9:30am</td></tr>
+
+<tr class=""><td>11:26am</td><td>Martinsville Middle School TM A</td><td>7384</td><td>Martinsville, VA</td><td>Heather Hoffman</td><td>9:48am</td></tr>
+<tr class=""><td>11:46am</td><td>Northampton Middle School TM A</td><td>7392</td><td>Eastville, VA</td><td>Keysan Brittingham</td><td>10:06am</td></tr>
+<tr class=""><td>12:06pm</td><td>Trailside Middle School TM A</td><td>7523</td><td>Ashburn, VA</td><td>Ramesh Madisetty</td><td>10:24am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-9">
+              <h3>Div III</h3>
+              <p class="location">Auditorium</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>2:00pm</td><td>Jefferson Forest High School TM A</td><td>4986</td><td>Forest, VA</td><td>Suzanne Coleman</td><td>11:00am</td></tr>
+<tr class=""><td>2:20pm</td><td>FCPL - Oakton TM A</td><td>5078</td><td>Vienna, VA</td><td>Kathleen Dulaney</td><td>11:36am</td></tr>
+<tr class=""><td>2:40pm</td><td>Northampton High School TM A</td><td>6763</td><td>Eastville, VA</td><td>Brad Ford</td><td>11:18am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+          </section>
+          <section class="problem-card" id="sec-10">
+            <div class="problem-head">
+              <h2 class="problem-title">Life&#x27;s a Ball!</h2>
+              <div class="problem-sub">1 division</div>
+              <div class="division-tabs">
+                <span class="pill">Div I · Aux Gym</span>
+                <span class="pill">Div II · Aux Gym</span>
+                <span class="pill">Div III · Aux Gym</span>
+              </div>
+            </div>
+            <div class="section" id="sec-10">
+              <h3>Div I</h3>
+              <p class="location">Aux Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Weigh In</th><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th>
+				  <th>Coach</th><th>Spont</th></tr>
+</thead><tbody>
+				  <tr class=""><td>8:00am</td><td>9:00am</td>
+				  <td>Round Hill Elementary School TM A</td><td>4732</td><td>Round Hill, VA</td><td>Emily Abbey</td>
+				  <td>11:00am</td></tr>
+
+				  <tr class=""><td>8:20am</td><td>9:20am</td><td>Glebe Elementary School TM A</td><td>4124</td><td>Arlington, VA</td>
+				  <td>Rachel Kenney</td><td>11:18am</td></tr>
+<tr class=""><td>8:40am</td><td>9:40am</td><td>Ashburn Elementary School TM A</td>
+				  <td>5485</td><td>Ashburn, VA</td><td>Caroline Pinkston</td><td>11:36am</td></tr>
+
+<tr class=""><td>9:18am</td><td>10:18am</td><td>Poquoson Elementary School TM A</td>
+				  <td>5800</td><td>Poquoson, VA</td><td>Lindsey Watson</td><td>1:30pm</td></tr>
+<tr class=""><td>9:38am</td><td>10:38am</td>
+				  <td>Nysmith School TM A</td><td>7528</td><td>Herndon, VA</td><td>Ted Gudmundsen</td><td>1:48pm</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-11">
+              <h3>Div II</h3>
+              <p class="location">Aux Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Weigh In</th><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>10:20am</td><td>11:20am</td><td>Haycock Elementary School TM A</td><td>4052</td><td>Falls Church, VA</td><td>Smita Thmoas</td><td>8:00am</td></tr>
+<tr class=""><td>10:40am</td><td>11:40am</td><td>Watson Mountain Middle School TM A</td><td>7524</td><td>Ashburn, VA</td><td>Jennifer Ahmed</td><td>8:18am</td></tr>
+<tr class=""><td>11:00am</td><td>12:00pm</td><td>Smarts Mill Middle School, TM A</td><td>3973</td><td>Leesburg, VA</td><td>Jennifer Brady</td><td>8:36am</td></tr>
+<tr class=""><td>11:20am</td><td>12:20pm</td><td>Poquoson Middle School TM A</td><td>4044</td><td>Poquoson, VA</td><td>Norm Remchuck</td><td>8:54am</td></tr>
+
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-12">
+              <h3>Div III</h3>
+              <p class="location">Aux Gym</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Weigh In</th><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>12:40pm</td><td>1:30pm</td><td>Arlington Rotary Club TM A</td><td>4289</td><td>Arlington, VA</td><td>Kendra Russell</td><td>3:00pm</td></tr>
+<tr class=""><td>12:20pm</td><td>1:50pm</td><td>Northampton High School TM A</td><td>6904</td><td>Eastville, VA</td><td>Brad Ford</td><td>3:18pm</td></tr>
+<tr class=""><td>1:00pm</td><td>2:20pm</td><td>Poquoson High School TM A</td><td>4045</td><td>Poquoson, VA</td><td>Norman Remchuk</td><td>3:36pm</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+          </section>
+          <section class="problem-card" id="sec-13">
+            <div class="problem-head">
+              <h2 class="problem-title">Taller Tales of John Jivery</h2>
+              <div class="problem-sub">2 divisions</div>
+              <div class="division-tabs">
+                <span class="pill">Div I · Choir Room 803</span>
+                <span class="pill">Div II · Choir Room 803</span>
+              </div>
+            </div>
+            <div class="section" id="sec-13">
+              <h3>Div I</h3>
+              <p class="location">Choir Room 803</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>10:20am</td><td>Ashlawn Elementary School TM B</td><td>5569</td><td>Arlington, VA</td><td>Caroline Cecot</td><td>12:39pm</td></tr>
+<tr class=""><td>10:40am</td><td>Steuart W Wellar Elementary School TM A</td><td>6216</td><td>Ashburn, VA</td><td>Sameera Mogal</td><td>12:57pm</td></tr>
+<tr class=""><td>11:00am</td><td>Discovery Elementary School TM A</td><td>6797</td><td>Arlington, VA</td><td>Mary Short</td><td>1:15pm</td></tr>
+
+<tr class=""><td>11:56am</td><td>Capron Elementary School TM A</td><td>6713</td><td>Capron, VA</td><td>Katherine Holland</td><td>1:33pm</td></tr>
+<tr class=""><td>12:16pm</td><td>Patrick Henry Elementary School TM A</td><td>7382</td><td>Martinsville, VA</td><td>Greg Hackenberg</td><td>10:55am</td></tr>
+<tr class=""><td>12:36pm</td><td>Westbriar Elementary School TM A</td><td>4897</td><td>Vienna, VA</td><td>Kathleen Dulaney</td><td>11:31am</td></tr>
+<tr class=""><td>12:56pm</td><td>Hovatter Elementary School TM A</td><td>3913</td><td>Aldie, VA</td><td>Sangeetha Arivarignan</td><td>11:13am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+            <div class="section" id="sec-14">
+              <h3>Div II</h3>
+              <p class="location">Choir Room 803</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Long Term</th><th>Team Name</th><th>Number</th><th>Location</th><th>Coach</th><th>Spont</th></tr>
+</thead><tbody><tr class=""><td>8:00am</td><td>Lake Braddock Secondary School TM A</td><td>5584</td><td>Burke, VA</td><td>Julie Beckwitt</td><td>9:00am</td></tr>
+<tr class=""><td>8:20am</td><td>Willard Middle School TM A</td><td>4498</td><td>Aldie, VA</td><td>Emily Morford</td><td>9:18am</td></tr>
+<tr class=""><td>8:40am</td><td>Kilgore Gifted Center TM A</td><td>6024</td><td>Hampton, VA</td><td>Danielle Nicole Smith</td><td>9:36am</td></tr>
+<tr class=""><td>9:18am</td><td>Watson Mountain Middle School TM A</td><td>7525</td><td>Dulles, VA</td><td>Dwipshikha Shome</td><td>10:12am</td></tr>
+<tr class=""><td>9:38am</td><td>Arlington Rotary Club TM A</td><td>4666</td><td>Arlington, VA</td><td>Kara Sweeney</td><td>10:30am</td></tr>
+</tbody></table>
+              </div>
+              <a class="top-link" href="#top">Back to top ↑</a>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Built from <strong>Tournament LT SP schedule FINAL by Prob, 8Mar.xlsx</strong>.
+  </div>
+
+<script>
+const searchData = [{"team": "Hovatter Elementary School TM A", "number": "3927", "location": "Aldie, VA", "coach": "Naren Raj Vaka", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "8:00am", "spont": "9:30am", "weighIn": "", "anchor": "sec-1"}, {"team": "Claremont Immersion Elementary School TM A", "number": "6579", "location": "Arlington, VA", "coach": "Sheri Weathers", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "8:18am", "spont": "9:48am", "weighIn": "", "anchor": "sec-1"}, {"team": "Glebe Elementary School TM A", "number": "4123", "location": "Arlington, VA", "coach": "Kristen Doczkat", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "8:36am", "spont": "10:06am", "weighIn": "", "anchor": "sec-1"}, {"team": "Cedar Lane Elementary School TM A", "number": "5005", "location": "Ashburn, VA", "coach": "Vasumathi Gonuguntla", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "9:12am", "spont": "11:00am", "weighIn": "", "anchor": "sec-1"}, {"team": "Hamilton Elementary School TM A", "number": "5670", "location": "Hamilton, VA", "coach": "Annie Hess", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "9:30am", "spont": "10:42am", "weighIn": "", "anchor": "sec-1"}, {"team": "Forestville Elementary School TM A", "number": "4051", "location": "Great Falls, VA", "coach": "Jason Bryant", "problem": "Off the Rails", "division": "Div I", "venue": "Main Gym", "longTerm": "9:48am", "spont": "11:18am", "weighIn": "", "anchor": "sec-1"}, {"team": "Tabb Middle School TM A", "number": "4014", "location": "Yorktown, VA", "coach": "Anna Mazzucca", "problem": "Off the Rails", "division": "Div II", "venue": "Main Gym", "longTerm": "10:30am", "spont": "12:40pm", "weighIn": "", "anchor": "sec-2"}, {"team": "Kilmer Middle School TM A", "number": "4896", "location": "Vienna, VA", "coach": "Kathleen Dulaney", "problem": "Off the Rails", "division": "Div II", "venue": "Main Gym", "longTerm": "10:48am", "spont": "1:34pm", "weighIn": "", "anchor": "sec-2"}, {"team": "Women in IP Network TM A", "number": "6397", "location": "Arlington, VA", "coach": "Kirsten Braun", "problem": "Off the Rails", "division": "Div II", "venue": "Main Gym", "longTerm": "11:06am", "spont": "1:16pm", "weighIn": "", "anchor": "sec-2"}, {"team": "Blue Ridge Middle School TM A", "number": "7311", "location": "Purcellville, VA", "coach": "Dena Getz", "problem": "Off the Rails", "division": "Div II", "venue": "Main Gym", "longTerm": "11:24am", "spont": "12:58pm", "weighIn": "", "anchor": "sec-2"}, {"team": "FCPL - Oakton TM A", "number": "6755", "location": "Dunn Loring, VA", "coach": "Tejas Mehta", "problem": "Off the Rails", "division": "Div III", "venue": "Main Gym", "longTerm": "12:00pm", "spont": "2:50pm", "weighIn": "", "anchor": "sec-3"}, {"team": "Escuela Key Elementary School TM A", "number": "4789", "location": "Arlington, VA", "coach": "Erin Aylor", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "11:30am", "spont": "8:00am", "weighIn": "", "anchor": "sec-4"}, {"team": "Pinebrook Elementary School TM A", "number": "4551", "location": "Aldie, VA", "coach": "Ramya Gopalarathinam", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "11:48am", "spont": "8:18am", "weighIn": "", "anchor": "sec-4"}, {"team": "Oak Hill Elementary School TM A", "number": "7595", "location": "Herndon, VA", "coach": "Kripa Faraday", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "12:06pm", "spont": "8:36am", "weighIn": "", "anchor": "sec-4"}, {"team": "Tappahannock Elementary School TM A", "number": "6685", "location": "Tappahannock, VA", "coach": "Victoria Boone", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "12:24pm", "spont": "9:12am", "weighIn": "", "anchor": "sec-4"}, {"team": "Albert Harris Elementary School TM A", "number": "7518", "location": "Martinsville, VA", "coach": "Nancy Rosas Lopez", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "1:40pm", "spont": "9:30am", "weighIn": "", "anchor": "sec-4"}, {"team": "An Achievable Dream Academy TM A", "number": "7534", "location": "Newport News, VA", "coach": "Sara Betzold", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "1:58pm", "spont": "9:48am", "weighIn": "", "anchor": "sec-4"}, {"team": "Sanders Corner Elementary School TM A", "number": "5692", "location": "Ashburn, VA", "coach": "Amanda Norris", "problem": "Lost in OMERland", "division": "Div I", "venue": "Art Room 806", "longTerm": "2:16pm", "spont": "10:06am", "weighIn": "", "anchor": "sec-4"}, {"team": "Arlington Rotary Club TM A", "number": "4262", "location": "Arlington, VA", "coach": "Christina Headrick", "problem": "Lost in OMERland", "division": "Div II", "venue": "Art Room 806", "longTerm": "9:00am", "spont": "1:00pm", "weighIn": "", "anchor": "sec-5"}, {"team": "Blue Ridge Middle School TM A", "number": "7312", "location": "Purcellville, VA", "coach": "David Bartlow", "problem": "Lost in OMERland", "division": "Div II", "venue": "Art Room 806", "longTerm": "9:18am", "spont": "1:18pm", "weighIn": "", "anchor": "sec-5"}, {"team": "Martinsville Middle School TM A", "number": "7383", "location": "Martinsville, VA", "coach": "Liz Lynch", "problem": "Lost in OMERland", "division": "Div II", "venue": "Art Room 806", "longTerm": "9:36am", "spont": "1:36pm", "weighIn": "", "anchor": "sec-5"}, {"team": "Watson Mountain Middle School TM A", "number": "7526", "location": "Leesburg, VA", "coach": "Daniela Rodrigues-Henry", "problem": "Lost in OMERland", "division": "Div II", "venue": "Art Room 806", "longTerm": "10:12am", "spont": "2:12pm", "weighIn": "", "anchor": "sec-5"}, {"team": "Oak Hill Elementary School TM A", "number": "7535", "location": "Herndon, VA", "coach": "Pooja Banait", "problem": "Lost in OMERland", "division": "Div II", "venue": "Art Room 806", "longTerm": "10:30am", "spont": "2:30pm", "weighIn": "", "anchor": "sec-5"}, {"team": "Galileo Magnet High School TM A", "number": "7527", "location": "Danville, VA", "coach": "Mellisa Stein", "problem": "Lost in OMERland", "division": "Div III", "venue": "Art Room 806", "longTerm": "10:50am", "spont": "11:50am", "weighIn": "", "anchor": "sec-6"}, {"team": "Goshen Post Elementary School TM A", "number": "7047", "location": "Aldie, VA", "coach": "Hindu Kothapalli", "problem": "The Epic Quest", "division": "Div I", "venue": "Auditorium", "longTerm": "7:30am", "spont": "9:00am", "weighIn": "", "anchor": "sec-7"}, {"team": "Olde Creek Elementary School TM A", "number": "4387", "location": "Fairfax, VA", "coach": "Rachel Pham", "problem": "The Epic Quest", "division": "Div I", "venue": "Auditorium", "longTerm": "7:50am", "spont": "9:36am", "weighIn": "", "anchor": "sec-7"}, {"team": "Clermont Elementary School TM A", "number": "4911", "location": "Alexandria, VA", "coach": "Jennifer Jones", "problem": "The Epic Quest", "division": "Div I", "venue": "Auditorium", "longTerm": "8:10am", "spont": "9:18am", "weighIn": "", "anchor": "sec-7"}, {"team": "Oak Street Elementary School TM D", "number": "6885", "location": "Falls Church, VA", "coach": "Adam Fields", "problem": "The Epic Quest", "division": "Div I", "venue": "Auditorium", "longTerm": "8:48am", "spont": "10:12am", "weighIn": "", "anchor": "sec-7"}, {"team": "Elaine Thompson Elementary School TM A", "number": "5824", "location": "Ashburn, VA", "coach": "Deepthi Siramdas", "problem": "The Epic Quest", "division": "Div I", "venue": "Auditorium", "longTerm": "9:08am", "spont": "10:30am", "weighIn": "", "anchor": "sec-7"}, {"team": "Sangster Elementary School TM A", "number": "6417", "location": "Springfield, VA", "coach": "Catherine Baroang", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "9:30am", "spont": "8:18am", "weighIn": "", "anchor": "sec-8"}, {"team": "Mark Twain Middle School TM A", "number": "4913", "location": "Alexandria, VA", "coach": "Jennifer Jones", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "10:08am", "spont": "8:54am", "weighIn": "", "anchor": "sec-8"}, {"team": "Smarts Mill Middle School TM A", "number": "4348", "location": "Leesburg, VA", "coach": "Jennifer Guida", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "10:28am", "spont": "8:36am", "weighIn": "", "anchor": "sec-8"}, {"team": "James H Cary Intermediate School TM A", "number": "6686", "location": "Montross, VA", "coach": "Yuwei Chen", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "10:48am", "spont": "9:30am", "weighIn": "", "anchor": "sec-8"}, {"team": "Martinsville Middle School TM A", "number": "7384", "location": "Martinsville, VA", "coach": "Heather Hoffman", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "11:26am", "spont": "9:48am", "weighIn": "", "anchor": "sec-8"}, {"team": "Northampton Middle School TM A", "number": "7392", "location": "Eastville, VA", "coach": "Keysan Brittingham", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "11:46am", "spont": "10:06am", "weighIn": "", "anchor": "sec-8"}, {"team": "Trailside Middle School TM A", "number": "7523", "location": "Ashburn, VA", "coach": "Ramesh Madisetty", "problem": "The Epic Quest", "division": "Div II", "venue": "Auditorium", "longTerm": "12:06pm", "spont": "10:24am", "weighIn": "", "anchor": "sec-8"}, {"team": "Jefferson Forest High School TM A", "number": "4986", "location": "Forest, VA", "coach": "Suzanne Coleman", "problem": "The Epic Quest", "division": "Div III", "venue": "Auditorium", "longTerm": "2:00pm", "spont": "11:00am", "weighIn": "", "anchor": "sec-9"}, {"team": "FCPL - Oakton TM A", "number": "5078", "location": "Vienna, VA", "coach": "Kathleen Dulaney", "problem": "The Epic Quest", "division": "Div III", "venue": "Auditorium", "longTerm": "2:20pm", "spont": "11:36am", "weighIn": "", "anchor": "sec-9"}, {"team": "Northampton High School TM A", "number": "6763", "location": "Eastville, VA", "coach": "Brad Ford", "problem": "The Epic Quest", "division": "Div III", "venue": "Auditorium", "longTerm": "2:40pm", "spont": "11:18am", "weighIn": "", "anchor": "sec-9"}, {"team": "Round Hill Elementary School TM A", "number": "4732", "location": "Round Hill, VA", "coach": "Emily Abbey", "problem": "Life's a Ball!", "division": "Div I", "venue": "Aux Gym", "longTerm": "9:00am", "spont": "11:00am", "weighIn": "8:00am", "anchor": "sec-10"}, {"team": "Glebe Elementary School TM A", "number": "4124", "location": "Arlington, VA", "coach": "Rachel Kenney", "problem": "Life's a Ball!", "division": "Div I", "venue": "Aux Gym", "longTerm": "9:20am", "spont": "11:18am", "weighIn": "8:20am", "anchor": "sec-10"}, {"team": "Ashburn Elementary School TM A", "number": "5485", "location": "Ashburn, VA", "coach": "Caroline Pinkston", "problem": "Life's a Ball!", "division": "Div I", "venue": "Aux Gym", "longTerm": "9:40am", "spont": "11:36am", "weighIn": "8:40am", "anchor": "sec-10"}, {"team": "Poquoson Elementary School TM A", "number": "5800", "location": "Poquoson, VA", "coach": "Lindsey Watson", "problem": "Life's a Ball!", "division": "Div I", "venue": "Aux Gym", "longTerm": "10:18am", "spont": "1:30pm", "weighIn": "9:18am", "anchor": "sec-10"}, {"team": "Nysmith School TM A", "number": "7528", "location": "Herndon, VA", "coach": "Ted Gudmundsen", "problem": "Life's a Ball!", "division": "Div I", "venue": "Aux Gym", "longTerm": "10:38am", "spont": "1:48pm", "weighIn": "9:38am", "anchor": "sec-10"}, {"team": "Haycock Elementary School TM A", "number": "4052", "location": "Falls Church, VA", "coach": "Smita Thmoas", "problem": "Life's A Ball!", "division": "Div II", "venue": "Aux Gym", "longTerm": "11:20am", "spont": "8:00am", "weighIn": "10:20am", "anchor": "sec-11"}, {"team": "Watson Mountain Middle School TM A", "number": "7524", "location": "Ashburn, VA", "coach": "Jennifer Ahmed", "problem": "Life's A Ball!", "division": "Div II", "venue": "Aux Gym", "longTerm": "11:40am", "spont": "8:18am", "weighIn": "10:40am", "anchor": "sec-11"}, {"team": "Smarts Mill Middle School, TM A", "number": "3973", "location": "Leesburg, VA", "coach": "Jennifer Brady", "problem": "Life's A Ball!", "division": "Div II", "venue": "Aux Gym", "longTerm": "12:00pm", "spont": "8:36am", "weighIn": "11:00am", "anchor": "sec-11"}, {"team": "Poquoson Middle School TM A", "number": "4044", "location": "Poquoson, VA", "coach": "Norm Remchuck", "problem": "Life's A Ball!", "division": "Div II", "venue": "Aux Gym", "longTerm": "12:20pm", "spont": "8:54am", "weighIn": "11:20am", "anchor": "sec-11"}, {"team": "Arlington Rotary Club TM A", "number": "4289", "location": "Arlington, VA", "coach": "Kendra Russell", "problem": "Life's A Ball!", "division": "Div III", "venue": "Aux Gym", "longTerm": "1:30pm", "spont": "3:00pm", "weighIn": "12:40pm", "anchor": "sec-12"}, {"team": "Northampton High School TM A", "number": "6904", "location": "Eastville, VA", "coach": "Brad Ford", "problem": "Life's A Ball!", "division": "Div III", "venue": "Aux Gym", "longTerm": "1:50pm", "spont": "3:18pm", "weighIn": "12:20pm", "anchor": "sec-12"}, {"team": "Poquoson High School TM A", "number": "4045", "location": "Poquoson, VA", "coach": "Norman Remchuk", "problem": "Life's A Ball!", "division": "Div III", "venue": "Aux Gym", "longTerm": "2:20pm", "spont": "3:36pm", "weighIn": "1:00pm", "anchor": "sec-12"}, {"team": "Ashlawn Elementary School TM B", "number": "5569", "location": "Arlington, VA", "coach": "Caroline Cecot", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "10:20am", "spont": "12:39pm", "weighIn": "", "anchor": "sec-13"}, {"team": "Steuart W Wellar Elementary School TM A", "number": "6216", "location": "Ashburn, VA", "coach": "Sameera Mogal", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "10:40am", "spont": "12:57pm", "weighIn": "", "anchor": "sec-13"}, {"team": "Discovery Elementary School TM A", "number": "6797", "location": "Arlington, VA", "coach": "Mary Short", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "11:00am", "spont": "1:15pm", "weighIn": "", "anchor": "sec-13"}, {"team": "Capron Elementary School TM A", "number": "6713", "location": "Capron, VA", "coach": "Katherine Holland", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "11:56am", "spont": "1:33pm", "weighIn": "", "anchor": "sec-13"}, {"team": "Patrick Henry Elementary School TM A", "number": "7382", "location": "Martinsville, VA", "coach": "Greg Hackenberg", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "12:16pm", "spont": "10:55am", "weighIn": "", "anchor": "sec-13"}, {"team": "Westbriar Elementary School TM A", "number": "4897", "location": "Vienna, VA", "coach": "Kathleen Dulaney", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "12:36pm", "spont": "11:31am", "weighIn": "", "anchor": "sec-13"}, {"team": "Hovatter Elementary School TM A", "number": "3913", "location": "Aldie, VA", "coach": "Sangeetha Arivarignan", "problem": "Taller Tales of John Jivery", "division": "Div I", "venue": "Choir Room 803", "longTerm": "12:56pm", "spont": "11:13am", "weighIn": "", "anchor": "sec-13"}, {"team": "Lake Braddock Secondary School TM A", "number": "5584", "location": "Burke, VA", "coach": "Julie Beckwitt", "problem": "Taller Tales of John Jivery", "division": "Div II", "venue": "Choir Room 803", "longTerm": "8:00am", "spont": "9:00am", "weighIn": "", "anchor": "sec-14"}, {"team": "Willard Middle School TM A", "number": "4498", "location": "Aldie, VA", "coach": "Emily Morford", "problem": "Taller Tales of John Jivery", "division": "Div II", "venue": "Choir Room 803", "longTerm": "8:20am", "spont": "9:18am", "weighIn": "", "anchor": "sec-14"}, {"team": "Kilgore Gifted Center TM A", "number": "6024", "location": "Hampton, VA", "coach": "Danielle Nicole Smith", "problem": "Taller Tales of John Jivery", "division": "Div II", "venue": "Choir Room 803", "longTerm": "8:40am", "spont": "9:36am", "weighIn": "", "anchor": "sec-14"}, {"team": "Watson Mountain Middle School TM A", "number": "7525", "location": "Dulles, VA", "coach": "Dwipshikha Shome", "problem": "Taller Tales of John Jivery", "division": "Div II", "venue": "Choir Room 803", "longTerm": "9:18am", "spont": "10:12am", "weighIn": "", "anchor": "sec-14"}, {"team": "Arlington Rotary Club TM A", "number": "4666", "location": "Arlington, VA", "coach": "Kara Sweeney", "problem": "Taller Tales of John Jivery", "division": "Div II", "venue": "Choir Room 803", "longTerm": "9:38am", "spont": "10:30am", "weighIn": "", "anchor": "sec-14"}];
+const input = document.getElementById('teamSearch');
+const resultsWrap = document.getElementById('resultsWrap');
+const resultsEl = document.getElementById('results');
+const clearBtn = document.getElementById('clearBtn');
+
+function renderResults(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    resultsWrap.style.display = 'none';
+    resultsEl.innerHTML = '';
+    return;
+  }
+  const results = searchData.filter(item => {
+    return [
+      item.team, item.number, item.location, item.coach,
+      item.problem, item.division, item.venue, item.longTerm,
+      item.spont, item.weighIn
+    ].join(' ').toLowerCase().includes(q);
+  });
+
+  resultsWrap.style.display = 'block';
+  if (!results.length) {
+    resultsEl.innerHTML = '<div class="empty">No matching teams found.</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = results.map(item => {
+    const times = [
+      item.weighIn ? `Weigh In: ${item.weighIn}` : '',
+      item.longTerm ? `Long Term: ${item.longTerm}` : '',
+      item.spont ? `Spont: ${item.spont}` : ''
+    ].filter(Boolean).join(' · ');
+    return `
+      <div class="result">
+        <a href="#${item.anchor}">
+          <div class="result-title">${item.team}${item.number ? ' (#' + item.number + ')' : ''}</div>
+          <div class="result-meta">${item.problem} · ${item.division} · ${item.venue}</div>
+          <div class="result-meta">${item.location}${item.coach ? ' · Coach: ' + item.coach : ''}</div>
+          <div class="result-times">${times}</div>
+        </a>
+      </div>
+    `;
+  }).join('');
+}
+
+input.addEventListener('input', e => renderResults(e.target.value));
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  renderResults('');
+  input.focus();
+});
+
+const hash = window.location.hash.replace('#','').trim();
+if (hash) {
+  const match = searchData.find(item => item.number === hash || item.team.toLowerCase() === hash.toLowerCase());
+  if (match) {
+    input.value = hash;
+    renderResults(hash);
+  }
+}
+</script>
+</body>
+</html>
