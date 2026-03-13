@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Volunteer Schedule</title>
+<style>
+:root {
+  --bg: #f7f5fb;
+  --card: #ffffff;
+  --ink: #241f35;
+  --muted: #6b6580;
+  --line: #e8e0f2;
+  --brand: #7a4cc2;
+  --brand2: #9d6de0;
+  --soft: #f1e9ff;
+  --accent: #fff3a8;
+  --ok: #ebfff1;
+  --shadow: 0 12px 32px rgba(54, 32, 95, 0.10);
+  --radius: 18px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, #ffffff 0, #faf7ff 25%, #f7f5fb 100%);
+}
+a { color: inherit; }
+.hero {
+  background: linear-gradient(135deg, #5d3aa4 0%, #8e63d8 100%);
+  color: white;
+  padding: 42px 20px 28px;
+}
+.hero-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.05;
+}
+.hero p {
+  margin: 0;
+  max-width: 850px;
+  color: rgba(255,255,255,0.92);
+  font-size: 1.02rem;
+}
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 22px 20px 48px;
+}
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-top: -18px;
+  background: rgba(247,245,251,0.88);
+  backdrop-filter: blur(10px);
+  padding: 14px 0 16px;
+}
+.search-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.search-row {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr auto;
+  gap: 12px;
+}
+input, select, button {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d8ccef;
+  padding: 13px 14px;
+  font-size: 1rem;
+  min-width: 0;
+}
+button {
+  width: auto;
+  background: var(--brand);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  padding-inline: 18px;
+}
+button:hover { background: #6538b4; }
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: .95rem;
+}
+.badge {
+  background: var(--soft);
+  color: var(--brand);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 700;
+}
+.quicklinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+.quicklinks a {
+  text-decoration: none;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: .92rem;
+}
+.quicklinks a:hover { background: var(--soft); }
+.role-section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  margin: 18px 0;
+  overflow: hidden;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 12px;
+}
+.section-head h2 {
+  margin: 0;
+  font-size: 1.22rem;
+}
+.pill {
+  white-space: nowrap;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--brand);
+  font-weight: 700;
+  padding: 6px 10px;
+  font-size: .9rem;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px 20px;
+  text-align: left;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+thead th {
+  background: #fbf9ff;
+  color: var(--muted);
+  font-size: .85rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+tbody tr:hover { background: #fcfbff; }
+.time {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.no-team {
+  color: var(--muted);
+  font-style: italic;
+}
+.hidden { display: none !important; }
+.empty {
+  display: none;
+  margin: 22px 0;
+  background: white;
+  border: 1px dashed #d8ccef;
+  border-radius: 18px;
+  padding: 22px;
+  color: var(--muted);
+}
+.footer-note {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: .93rem;
+}
+@media (max-width: 860px) {
+  .search-row {
+    grid-template-columns: 1fr;
+  }
+  .controls {
+    position: static;
+    margin-top: 0;
+  }
+}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Volunteer Schedule</h1>
+      <p>Search by volunteer name, team, school, role, or time. You can also jump to a role section below.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="controls">
+      <div class="search-card">
+        <div class="search-row">
+          <input id="searchBox" type="text" placeholder="Find a volunteer, school, team, role, or time…" />
+          <select id="roleFilter">
+            <option value="">All roles</option>
+            <option value="All Day Volunteer Check-in">All Day Volunteer Check-in</option><option value="All Day Registration/Info Desk">All Day Registration/Info Desk</option><option value="All Day Photo Booth/Registration/Info Desk">All Day Photo Booth/Registration/Info Desk</option><option value="All Day Spontaneous Check-in">All Day Spontaneous Check-in</option><option value="All Day Floater">All Day Floater</option><option value="Volunteer/Team Check-In">Volunteer/Team Check-In</option><option value="Traffic">Traffic</option><option value="Souvenir/Concession Table">Souvenir/Concession Table</option><option value="Photo Booth &amp; Pin Trading">Photo Booth &amp; Pin Trading</option><option value="Spontaneous">Spontaneous</option><option value="Door Keeper – Problem 1">Door Keeper – Problem 1</option><option value="Door Keeper – Problem 2">Door Keeper – Problem 2</option><option value="Door Keeper – Problem 3">Door Keeper – Problem 3</option><option value="Door Keeper – Problem 4">Door Keeper – Problem 4</option><option value="Door Keeper – Problem 5">Door Keeper – Problem 5</option>
+          </select>
+          <button id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="meta">
+          <span class="badge">68 total volunteers</span>
+          <span id="resultText">Showing all entries</span>
+        </div>
+      </div>
+      <nav class="quicklinks">
+        <a href="#all-day-volunteer-check-in">All Day Volunteer Check-in</a>
+<a href="#all-day-registration-info-desk">All Day Registration/Info Desk</a>
+<a href="#all-day-photo-booth-registration-info-desk">All Day Photo Booth/Registration/Info Desk</a>
+<a href="#all-day-spontaneous-check-in">All Day Spontaneous Check-in</a>
+<a href="#all-day-floater">All Day Floater</a>
+<a href="#volunteer-team-check-in">Volunteer/Team Check-In</a>
+<a href="#traffic">Traffic</a>
+<a href="#souvenir-concession-table">Souvenir/Concession Table</a>
+<a href="#photo-booth-pin-trading">Photo Booth &amp; Pin Trading</a>
+<a href="#spontaneous">Spontaneous</a>
+<a href="#door-keeper-problem-1">Door Keeper – Problem 1</a>
+<a href="#door-keeper-problem-2">Door Keeper – Problem 2</a>
+<a href="#door-keeper-problem-3">Door Keeper – Problem 3</a>
+<a href="#door-keeper-problem-4">Door Keeper – Problem 4</a>
+<a href="#door-keeper-problem-5">Door Keeper – Problem 5</a>
+
+      </nav>
+    </div>
+
+    <div id="emptyState" class="empty">No matches yet. Try a volunteer name, school, team, role, or time.</div>
+
+    <section class="role-section" id="all-day-volunteer-check-in" data-role="All Day Volunteer Check-in">
+<div class="section-head"><h2>All Day Volunteer Check-in</h2><span class="pill">1 volunteer</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="megan gliebe all day volunteer check-in 7:00 am 3:00 pm —"><td><strong>Megan Gliebe</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>—</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="all-day-registration-info-desk" data-role="All Day Registration/Info Desk">
+<div class="section-head"><h2>All Day Registration/Info Desk</h2><span class="pill">1 volunteer</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="melissa patterson all day registration/info desk 7:00 am 3:00 pm kilgore gifted center tm a"><td><strong>Melissa Patterson</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>Kilgore Gifted Center TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="all-day-photo-booth-registration-info-desk" data-role="All Day Photo Booth/Registration/Info Desk">
+<div class="section-head"><h2>All Day Photo Booth/Registration/Info Desk</h2><span class="pill">1 volunteer</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="kimberly beckerdite all day photo booth/registration/info desk 7:00 am 3:00 pm an achievable dream academy tm a"><td><strong>Kimberly Beckerdite</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>An Achievable Dream Academy TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="all-day-spontaneous-check-in" data-role="All Day Spontaneous Check-in">
+<div class="section-head"><h2>All Day Spontaneous Check-in</h2><span class="pill">2 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="brian lemma all day spontaneous check-in 7:00 am 3:00 pm —"><td><strong>Brian Lemma</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>—</td></tr>
+<tr data-search="sheryl lemma all day spontaneous check-in 7:00 am 3:00 pm —"><td><strong>Sheryl Lemma</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>—</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="all-day-floater" data-role="All Day Floater">
+<div class="section-head"><h2>All Day Floater</h2><span class="pill">2 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="cooper roe all day floater 7:00 am 3:00 pm —"><td><strong>Cooper Roe</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>—</td></tr>
+<tr data-search="pamela clark all day floater 7:00 am 3:00 pm —"><td><strong>Pamela Clark</strong></td><td><span class="time">7:00 AM–3:00 PM</span></td><td>—</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="volunteer-team-check-in" data-role="Volunteer/Team Check-In">
+<div class="section-head"><h2>Volunteer/Team Check-In</h2><span class="pill">5 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="deepak jain volunteer/team check-in 7:00 am 9:00 am kilmer middle school tm a"><td><strong>Deepak Jain</strong></td><td><span class="time">7:00 AM–9:00 AM</span></td><td>Kilmer Middle School TM A</td></tr>
+<tr data-search="sarah smith volunteer/team check-in 7:00 am 9:00 am smarts mill middle school, tm a"><td><strong>Sarah Smith</strong></td><td><span class="time">7:00 AM–9:00 AM</span></td><td>Smarts Mill Middle School, TM A</td></tr>
+<tr data-search="dinesh roy volunteer/team check-in 9:00 am 11:00 am goshen post elementary school tm a"><td><strong>Dinesh Roy</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Goshen Post Elementary School TM A</td></tr>
+<tr data-search="margaret van arsdell volunteer/team check-in 9:00 am 11:00 am sanders corner elementary school tm a"><td><strong>Margaret Van Arsdell</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Sanders Corner Elementary School TM A</td></tr>
+<tr data-search="laura wade volunteer/team check-in 11:00 am 1:00 pm poquoson elementary school tm a"><td><strong>Laura Wade</strong></td><td><span class="time">11:00 AM–1:00 PM</span></td><td>Poquoson Elementary School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="traffic" data-role="Traffic">
+<div class="section-head"><h2>Traffic</h2><span class="pill">6 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="brian schoellkopf traffic 7:00 am 9:00 am hamilton elementary school tm a"><td><strong>Brian Schoellkopf</strong></td><td><span class="time">7:00 AM–9:00 AM</span></td><td>Hamilton Elementary School TM A</td></tr>
+<tr data-search="maria voziyan traffic 7:00 am 9:00 am sangster elementary school tm a"><td><strong>Maria Voziyan</strong></td><td><span class="time">7:00 AM–9:00 AM</span></td><td>Sangster Elementary School TM A</td></tr>
+<tr data-search="bilkis jahan traffic 9:00 am 11:00 am lake braddock secondary school tm a"><td><strong>Bilkis Jahan</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Lake Braddock Secondary School TM A</td></tr>
+<tr data-search="gagandeep bhanot traffic 9:00 am 11:00 am hovatter elementary school tm a"><td><strong>Gagandeep Bhanot</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Hovatter Elementary School TM A</td></tr>
+<tr data-search="jerome schorr traffic 11:00 am 1:00 pm arlington rotary club tm a"><td><strong>Jerome Schorr</strong></td><td><span class="time">11:00 AM–1:00 PM</span></td><td>Arlington Rotary Club TM A</td></tr>
+<tr data-search="vivek gupta traffic 11:00 am 1:00 pm watson mountain middle school tm a"><td><strong>Vivek Gupta</strong></td><td><span class="time">11:00 AM–1:00 PM</span></td><td>Watson Mountain Middle School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="souvenir-concession-table" data-role="Souvenir/Concession Table">
+<div class="section-head"><h2>Souvenir/Concession Table</h2><span class="pill">11 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="larae snoddy souvenir/concession table 7:00 am 8:30 am kilgore gifted center tm a"><td><strong>LaRae Snoddy</strong></td><td><span class="time">7:00 AM–8:30 AM</span></td><td>Kilgore Gifted Center TM A</td></tr>
+<tr data-search="stephanie lambrecht souvenir/concession table 7:00 am 9:00 am tappahannock elementary school tm a"><td><strong>Stephanie Lambrecht</strong></td><td><span class="time">7:00 AM–9:00 AM</span></td><td>Tappahannock Elementary School TM A</td></tr>
+<tr data-search="shreyansh vakil souvenir/concession table 8:00 am 9:00 am watson mountain middle school tm a"><td><strong>Shreyansh Vakil</strong></td><td><span class="time">8:00 AM–9:00 AM</span></td><td>Watson Mountain Middle School TM A</td></tr>
+<tr data-search="bindiya kotadia souvenir/concession table 9:00 am 11:00 am watson mountain middle school tm a"><td><strong>Bindiya Kotadia</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Watson Mountain Middle School TM A</td></tr>
+<tr data-search="jessica lee souvenir/concession table 9:00 am 11:00 am glebe elementary school tm a"><td><strong>Jessica Lee</strong></td><td><span class="time">9:00 AM–11:00 AM</span></td><td>Glebe Elementary School TM A</td></tr>
+<tr data-search="katy l harrison souvenir/concession table 9:45 am 11:45 am poquoson middle school tm a"><td><strong>Katy L Harrison</strong></td><td><span class="time">9:45 AM–11:45 AM</span></td><td>Poquoson Middle School TM A</td></tr>
+<tr data-search="izzy betzold souvenir/concession table 11:00 am 1:00 pm an achievable dream academy tm a"><td><strong>Izzy Betzold</strong></td><td><span class="time">11:00 AM–1:00 PM</span></td><td>An Achievable Dream Academy TM A</td></tr>
+<tr data-search="sonali yeola souvenir/concession table 11:00 am 1:00 pm oak hill elementary school tm a"><td><strong>Sonali Yeola</strong></td><td><span class="time">11:00 AM–1:00 PM</span></td><td>Oak Hill Elementary School TM A</td></tr>
+<tr data-search="sree billipuram souvenir/concession table 12:00 pm 2:00 pm watson mountain middle school tm a"><td><strong>Sree Billipuram</strong></td><td><span class="time">12:00 PM–2:00 PM</span></td><td>Watson Mountain Middle School TM A</td></tr>
+<tr data-search="nishi raizada souvenir/concession table 1:00 pm 3:00 pm nysmith school tm a"><td><strong>Nishi Raizada</strong></td><td><span class="time">1:00 PM–3:00 PM</span></td><td>Nysmith School TM A</td></tr>
+<tr data-search="ramesh madisetty souvenir/concession table 1:00 pm 3:00 pm trailside middle school tm a"><td><strong>Ramesh Madisetty</strong></td><td><span class="time">1:00 PM–3:00 PM</span></td><td>Trailside Middle School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="photo-booth-pin-trading" data-role="Photo Booth &amp; Pin Trading">
+<div class="section-head"><h2>Photo Booth &amp; Pin Trading</h2><span class="pill">3 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="julie hughes photo booth &amp; pin trading 8:45 am 10:45 am claremont immersion elementary school tm a"><td><strong>Julie Hughes</strong></td><td><span class="time">8:45 AM–10:45 AM</span></td><td>Claremont Immersion Elementary School TM A</td></tr>
+<tr data-search="libby sharp photo booth &amp; pin trading 10:30 am 12:30 pm martinsville middle school tm a"><td><strong>Libby Sharp</strong></td><td><span class="time">10:30 AM–12:30 PM</span></td><td>Martinsville Middle School TM A</td></tr>
+<tr data-search="emily edman photo booth &amp; pin trading 12:30 pm 2:30 pm poquoson high school tm a"><td><strong>Emily Edman</strong></td><td><span class="time">12:30 PM–2:30 PM</span></td><td>Poquoson High School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="spontaneous" data-role="Spontaneous">
+<div class="section-head"><h2>Spontaneous</h2><span class="pill">11 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="elizabeth matlock spontaneous 7:30 am 9:30 am ashburn elementary school tm a"><td><strong>Elizabeth Matlock</strong></td><td><span class="time">7:30 AM–9:30 AM</span></td><td>Ashburn Elementary School TM A</td></tr>
+<tr data-search="jing li spontaneous 7:30 am 9:30 am forestville elementary school tm a"><td><strong>Jing Li</strong></td><td><span class="time">7:30 AM–9:30 AM</span></td><td>Forestville Elementary School TM A</td></tr>
+<tr data-search="todd kohr spontaneous 7:30 am 9:30 am ashlawn elementary school tm b"><td><strong>Todd Kohr</strong></td><td><span class="time">7:30 AM–9:30 AM</span></td><td>Ashlawn Elementary School TM B</td></tr>
+<tr data-search="jamunarani kanda senniappa spontaneous 9:30 am 11:30 am pinebrook elementary school tm a"><td><strong>Jamunarani Kanda Senniappa</strong></td><td><span class="time">9:30 AM–11:30 AM</span></td><td>Pinebrook Elementary School TM A</td></tr>
+<tr data-search="jieyao chen spontaneous 9:30 am 11:30 am oak hill elementary school tm a"><td><strong>Jieyao Chen</strong></td><td><span class="time">9:30 AM–11:30 AM</span></td><td>Oak Hill Elementary School TM A</td></tr>
+<tr data-search="sirisha jupally spontaneous 9:30 am 11:30 am fcpl - oakton tm a"><td><strong>Sirisha Jupally</strong></td><td><span class="time">9:30 AM–11:30 AM</span></td><td>FCPL - Oakton TM A</td></tr>
+<tr data-search="dave lundin spontaneous 11:30 am 1:30 pm clermont elementary school tm a"><td><strong>Dave Lundin</strong></td><td><span class="time">11:30 AM–1:30 PM</span></td><td>Clermont Elementary School TM A</td></tr>
+<tr data-search="ellen kovar spontaneous 11:30 am 1:30 pm olde creek elementary school tm a"><td><strong>Ellen Kovar</strong></td><td><span class="time">11:30 AM–1:30 PM</span></td><td>Olde Creek Elementary School TM A</td></tr>
+<tr data-search="susie sprinkel eighmey spontaneous 11:30 am 1:30 pm smarts mill middle school tm a"><td><strong>Susie Sprinkel Eighmey</strong></td><td><span class="time">11:30 AM–1:30 PM</span></td><td>Smarts Mill Middle School TM A</td></tr>
+<tr data-search="jennifer ayers spontaneous 1:30 pm 3:30 pm willard middle school tm a"><td><strong>Jennifer Ayers</strong></td><td><span class="time">1:30 PM–3:30 PM</span></td><td>Willard Middle School TM A</td></tr>
+<tr data-search="makoto fukuhara spontaneous 1:30 pm 3:30 pm tabb middle school tm a"><td><strong>Makoto Fukuhara</strong></td><td><span class="time">1:30 PM–3:30 PM</span></td><td>Tabb Middle School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="door-keeper-problem-1" data-role="Door Keeper – Problem 1">
+<div class="section-head"><h2>Door Keeper – Problem 1</h2><span class="pill">6 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="mari clow door keeper – problem 1 7:45 am 9:45 am escuela key elementary school tm a"><td><strong>Mari Clow</strong></td><td><span class="time">7:45 AM–9:45 AM</span></td><td>Escuela Key Elementary School TM A</td></tr>
+<tr data-search="sarah leffler door keeper – problem 1 7:45 am 9:45 am mark twain middle school tm a"><td><strong>Sarah Leffler</strong></td><td><span class="time">7:45 AM–9:45 AM</span></td><td>Mark Twain Middle School TM A</td></tr>
+<tr data-search="john coleman door keeper – problem 1 9:45 am 11:45 am jefferson forest high school tm a"><td><strong>John Coleman</strong></td><td><span class="time">9:45 AM–11:45 AM</span></td><td>Jefferson Forest High School TM A</td></tr>
+<tr data-search="kristen anstead door keeper – problem 1 9:45 am 11:45 am glebe elementary school tm a"><td><strong>Kristen Anstead</strong></td><td><span class="time">9:45 AM–11:45 AM</span></td><td>Glebe Elementary School TM A</td></tr>
+<tr data-search="andy rowshan door keeper – problem 1 11:45 am 12:45 pm steuart w wellar elementary school tm a"><td><strong>Andy Rowshan</strong></td><td><span class="time">11:45 AM–12:45 PM</span></td><td>Steuart W Wellar Elementary School TM A</td></tr>
+<tr data-search="roger pike jr door keeper – problem 1 11:45 am 12:45 pm northampton high school tm a"><td><strong>Roger Pike Jr</strong></td><td><span class="time">11:45 AM–12:45 PM</span></td><td>Northampton High School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="door-keeper-problem-2" data-role="Door Keeper – Problem 2">
+<div class="section-head"><h2>Door Keeper – Problem 2</h2><span class="pill">3 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="rita ware door keeper – problem 2 8:30 am 10:30 am james h cary intermediate school tm a"><td><strong>Rita Ware</strong></td><td><span class="time">8:30 AM–10:30 AM</span></td><td>James H Cary Intermediate School TM A</td></tr>
+<tr data-search="sonal shroff door keeper – problem 2 10:30 am 12:30 pm cedar lane elementary school tm a"><td><strong>Sonal Shroff</strong></td><td><span class="time">10:30 AM–12:30 PM</span></td><td>Cedar Lane Elementary School TM A</td></tr>
+<tr data-search="laura short door keeper – problem 2 12:30 pm 2:30 pm discovery elementary school tm a"><td><strong>Laura Short</strong></td><td><span class="time">12:30 PM–2:30 PM</span></td><td>Discovery Elementary School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="door-keeper-problem-3" data-role="Door Keeper – Problem 3">
+<div class="section-head"><h2>Door Keeper – Problem 3</h2><span class="pill">7 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="frank gerlando door keeper – problem 3 7:15 am 9:15 am watson mountain middle school tm a"><td><strong>Frank Gerlando</strong></td><td><span class="time">7:15 AM–9:15 AM</span></td><td>Watson Mountain Middle School TM A</td></tr>
+<tr data-search="melissa edwards door keeper – problem 3 9:15 am 11:15 am capron elementary school tm a"><td><strong>Melissa Edwards</strong></td><td><span class="time">9:15 AM–11:15 AM</span></td><td>Capron Elementary School TM A</td></tr>
+<tr data-search="nitin pereira door keeper – problem 3 9:15 am 11:15 am hovatter elementary school tm a"><td><strong>Nitin Pereira</strong></td><td><span class="time">9:15 AM–11:15 AM</span></td><td>Hovatter Elementary School TM A</td></tr>
+<tr data-search="jessica burke door keeper – problem 3 11:15 am 1:15 pm arlington rotary club tm a"><td><strong>Jessica Burke</strong></td><td><span class="time">11:15 AM–1:15 PM</span></td><td>Arlington Rotary Club TM A</td></tr>
+<tr data-search="susan li door keeper – problem 3 11:15 am 1:15 pm fcpl - oakton tm a"><td><strong>Susan Li</strong></td><td><span class="time">11:15 AM–1:15 PM</span></td><td>FCPL - Oakton TM A</td></tr>
+<tr data-search="erin collins door keeper – problem 3 1:15 pm 3:15 pm northampton middle school tm a"><td><strong>Erin Collins</strong></td><td><span class="time">1:15 PM–3:15 PM</span></td><td>Northampton Middle School TM A</td></tr>
+<tr data-search="lauren mondala door keeper – problem 3 1:15 pm 3:15 pm blue ridge middle school tm a"><td><strong>Lauren Mondala</strong></td><td><span class="time">1:15 PM–3:15 PM</span></td><td>Blue Ridge Middle School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="door-keeper-problem-4" data-role="Door Keeper – Problem 4">
+<div class="section-head"><h2>Door Keeper – Problem 4</h2><span class="pill">6 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="kim zimmerman door keeper – problem 4 8:45 am 10:45 am haycock elementary school tm a"><td><strong>Kim Zimmerman</strong></td><td><span class="time">8:45 AM–10:45 AM</span></td><td>Haycock Elementary School TM A</td></tr>
+<tr data-search="laura logerfo door keeper – problem 4 8:45 am 10:45 am women in ip network tm a"><td><strong>Laura LoGerfo</strong></td><td><span class="time">8:45 AM–10:45 AM</span></td><td>Women in IP Network TM A</td></tr>
+<tr data-search="jennifer schottler door keeper – problem 4 10:45 am 12:45 pm arlington rotary club tm a"><td><strong>Jennifer Schottler</strong></td><td><span class="time">10:45 AM–12:45 PM</span></td><td>Arlington Rotary Club TM A</td></tr>
+<tr data-search="srivalli abburi door keeper – problem 4 10:45 am 12:45 pm elaine thompson elementary school tm a"><td><strong>Srivalli Abburi</strong></td><td><span class="time">10:45 AM–12:45 PM</span></td><td>Elaine Thompson Elementary School TM A</td></tr>
+<tr data-search="cameron hare door keeper – problem 4 12:45 pm 2:45 pm martinsville middle school tm a"><td><strong>Cameron Hare</strong></td><td><span class="time">12:45 PM–2:45 PM</span></td><td>Martinsville Middle School TM A</td></tr>
+<tr data-search="joe ratke door keeper – problem 4 12:45 pm 2:45 pm blue ridge middle school tm a"><td><strong>Joe Ratke</strong></td><td><span class="time">12:45 PM–2:45 PM</span></td><td>Blue Ridge Middle School TM A</td></tr>
+</tbody></table></div></section>
+<section class="role-section" id="door-keeper-problem-5" data-role="Door Keeper – Problem 5">
+<div class="section-head"><h2>Door Keeper – Problem 5</h2><span class="pill">3 volunteers</span></div>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Time</th><th>Team</th></tr></thead><tbody>
+<tr data-search="yun kim door keeper – problem 5 7:45 am 9:45 am westbriar elementary school tm a"><td><strong>Yun Kim</strong></td><td><span class="time">7:45 AM–9:45 AM</span></td><td>Westbriar Elementary School TM A</td></tr>
+<tr data-search="jenna calo door keeper – problem 5 9:45 am 11:45 am round hill elementarey school tm a"><td><strong>Jenna Calo</strong></td><td><span class="time">9:45 AM–11:45 AM</span></td><td>Round Hill Elementarey School TM A</td></tr>
+<tr data-search="jeanine pike door keeper – problem 5 11:45 am 12:45 pm northampton high school tm a"><td><strong>Jeanine Pike</strong></td><td><span class="time">11:45 AM–12:45 PM</span></td><td>Northampton High School TM A</td></tr>
+</tbody></table></div></section>
+
+
+    <div class="footer-note">Tip: this page works well on GitHub Pages just like your tournament schedule page.</div>
+  </main>
+
+<script>
+const searchBox = document.getElementById('searchBox');
+const roleFilter = document.getElementById('roleFilter');
+const clearBtn = document.getElementById('clearBtn');
+const rows = Array.from(document.querySelectorAll('tbody tr'));
+const sections = Array.from(document.querySelectorAll('.role-section'));
+const resultText = document.getElementById('resultText');
+const emptyState = document.getElementById('emptyState');
+
+function applyFilters() {
+  const q = searchBox.value.trim().toLowerCase();
+  const role = roleFilter.value;
+  let visibleRows = 0;
+  let visibleSections = 0;
+
+  sections.forEach(section => {
+    const sectionRole = section.dataset.role;
+    let sectionHasVisible = false;
+    const sectionRows = section.querySelectorAll('tbody tr');
+
+    sectionRows.forEach(row => {
+      const matchesSearch = !q || row.dataset.search.includes(q);
+      const matchesRole = !role || sectionRole === role;
+      const show = matchesSearch && matchesRole;
+      row.classList.toggle('hidden', !show);
+      if (show) {
+        visibleRows += 1;
+        sectionHasVisible = true;
+      }
+    });
+
+    section.classList.toggle('hidden', !sectionHasVisible);
+    if (sectionHasVisible) visibleSections += 1;
+  });
+
+  if (!q && !role) {
+    resultText.textContent = 'Showing all entries';
+  } else {
+    resultText.textContent = `Showing ${visibleRows} matching entr${visibleRows === 1 ? 'y' : 'ies'} across ${visibleSections} section${visibleSections === 1 ? '' : 's'}`;
+  }
+
+  emptyState.style.display = visibleRows ? 'none' : 'block';
+}
+
+searchBox.addEventListener('input', applyFilters);
+roleFilter.addEventListener('change', applyFilters);
+clearBtn.addEventListener('click', () => {
+  searchBox.value = '';
+  roleFilter.value = '';
+  applyFilters();
+  searchBox.focus();
+});
+applyFilters();
+</script>
+</body>
+</html>
